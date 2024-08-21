@@ -1,0 +1,58 @@
+# Number of replicas for the Nginx deployment
+replicaCount: 3
+
+# Nginx container image details
+image:
+  repository: nginx
+  tag: "1.21.6"
+  pullPolicy: IfNotPresent
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Argo Rollouts strategy
+rolloutStrategy:
+  # Strategy type: canary or blue-green
+  type: canary
+
+  # Canary strategy details
+  canary:
+    # Service names for canary and stable
+    stableService: nginx-stable
+    canaryService: nginx-canary
+
+    # Canary steps
+    steps:
+      - setWeight: 20
+      - pause: { duration: 10s }
+      - setWeight: 50
+      - pause: { duration: 10s }
+      - setWeight: 100
+
+# Resources configuration (requests and limits for the Nginx container)
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Node selector, tolerations, and affinity settings (optional)
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Additional configuration for the Nginx container (optional)
+extraArgs: []
+
+# Environment variables for the Nginx container (optional)
+env: []
+
+# Additional labels to add to the resources
+labels: {}
+
+# Annotations for the resources
+annotations: {}
